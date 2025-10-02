@@ -83,4 +83,3 @@ def semver_cmp(version1: str, version2: str, loose: bool = False) -> int:
     `1`  if `version1` >  `version2`.
     """
     return nodesemver.compare(version1, version2, loose)
-

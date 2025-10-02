@@ -11,16 +11,17 @@ import requests
 from flask import Flask, request, Response
 
 import tiny_htmls
-from tiny_utils.node_ecosys import ValidRegistryJson, ErrorRegistryJson, is_valid_version, NodeVersionRange, find_entry_file_from_package_json
-from tiny_utils.network import PathInfo, RequestNotValidError, make_response_altered
+from tiny_utils.network import PathInfo, RequestNotValidError
+from tiny_utils.network import make_response_altered
+from tiny_utils.node_ecosys import ValidRegistryJson, ErrorRegistryJson
+from tiny_utils.node_ecosys import is_valid_version, NodeVersionRange
+from tiny_utils.node_ecosys import find_entry_file_from_package_json
 from tiny_utils.general import get_entry_size, size_text, yellow_text
 
 
 NPM_REGISTRY_URL_BEGIN = os.getenv(
     'REGISTRY', 'https://registry.npmjs.org'
 ).rstrip('/')
-
-
 CONTENT_TYPE_UTF_8_TEXT = 'text/plain'
 CONTENT_TYPE_UTF_8_HTML = 'text/html'
 CONTENT_TYPE_IMAGE_ICO = 'image/icon'
@@ -120,7 +121,6 @@ class FeasibleVersionsList(object):
             pass
 
         return FeasibleVersionsList([], False, False)
-
 
 
 app = Flask(__name__)
@@ -253,6 +253,7 @@ def download_and_unpack_tarball(
 
     if flag_new_dir_or_file_cached:
         report_cache_folder_size()
+
 
 def give_file_or_dir(path_info: PathInfo, local_name: str) -> Response:
     """Return the file content or directory listing."""

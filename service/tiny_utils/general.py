@@ -40,8 +40,6 @@ class PurePosixPathThatMightBeDir(PurePosixPath):
         return self._is_dir
 
 
-
-
 def get_folder_size(path: str) -> int:
     """Get the size of a folder in bytes."""
     return sum(get_entry_size(os.path.join(path, f))
@@ -69,5 +67,3 @@ def size_text(size: int) -> str:
 def yellow_text(text: str) -> str:
     """ANSI coloring for yellow text."""
     return "\033[1;33m{:s}\033[0m".format(text)
-
-
