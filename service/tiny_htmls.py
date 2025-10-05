@@ -231,7 +231,8 @@ Showing all versions for package "{package:s}".
 
 
 def all_versions_page(
-        registry_json: ValidRegistryJson, path_info: PathInfo) -> str:
+        registry_json: ValidRegistryJson, path_info: PathInfo
+        ) -> str:
     """
     List all versions of the package.
     Used when no version is found to be valid.
