@@ -62,7 +62,6 @@ def report_cache_folder_size() -> None:
 class FeasibleVersionsList(object):
     versions:                 list[str]
     version_is_designated:    bool
-    is_already_all_dist_tags: bool
 
     @staticmethod
     def make(
@@ -78,7 +77,7 @@ class FeasibleVersionsList(object):
             # Show all versions with their dist-tags.
             return FeasibleVersionsList(
                 [ ver for ver in registry_json['dist-tags'].values() ],
-                False, True
+                False
             )
 
         if version_spec_str == 'all':
@@ -86,14 +85,14 @@ class FeasibleVersionsList(object):
             # Show all versions.
             return FeasibleVersionsList(
                 [ ver for ver in registry_json['versions'].keys() ],
-                False, False
+                False
             )
 
         if is_valid_version(version_spec_str):
             # An exact version. Show content of it.
             if version_spec_str not in registry_json['versions']:
-                return FeasibleVersionsList([], False, False)
-            return FeasibleVersionsList([version_spec_str], True, False)
+                return FeasibleVersionsList([], False)
+            return FeasibleVersionsList([version_spec_str], True)
 
         try:
             # A version range.
@@ -105,7 +104,7 @@ class FeasibleVersionsList(object):
                     for ver in registry_json['versions'].keys()
                     if ver in ver_range
                 ],
-                False, False
+                False
             )
         except:
             pass
@@ -113,14 +112,14 @@ class FeasibleVersionsList(object):
         try:
             # A exact `dist-tag`. Show content of the corresponding version.
             if version_spec_str not in registry_json['dist-tags']:
-                return FeasibleVersionsList([], False, False)
+                return FeasibleVersionsList([], False)
             return FeasibleVersionsList(
-                [registry_json['dist-tags'][version_spec_str]], True, False
+                [registry_json['dist-tags'][version_spec_str]], True
             )
         except:
             pass
 
-        return FeasibleVersionsList([], False, False)
+        return FeasibleVersionsList([], False)
 
 
 app = Flask(__name__)
@@ -185,7 +184,6 @@ def handle_path(abs_path: str) -> Response:
                 feasible_vers.versions,
                 registry_json,
                 path_info,
-                feasible_vers.is_already_all_dist_tags
             ),
             200, CONTENT_TYPE_UTF_8_HTML
         )

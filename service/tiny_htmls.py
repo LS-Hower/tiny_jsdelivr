@@ -105,7 +105,7 @@ def _vers_tags_table(
 
 
 _VERSIONS_TABLES_HIGHLIGHTING_TAGS_TEMPLATE = '''
-versions with dist-tag(s):<br/>
+{highlight_title:s}<br/>
 {versions_with_dist_tags:s}
 <hr>
 full list:<br/>
@@ -121,12 +121,20 @@ def _versions_tables_highlighting_tags(
     """
     Show the tagged versions in a table, and a full list of all versions.
     """
-    return _VERSIONS_TABLES_HIGHLIGHTING_TAGS_TEMPLATE.format(
-        versions_with_dist_tags=_vers_tags_table(
+    versions_having_dist_tags = set(tag_to_ver.values())
+    if all(ver in versions_having_dist_tags for ver in versions):
+        highlight_title = "(all version(s) have dist-tag(s))"
+        versions_with_dist_tags = ""
+    else:
+        highlight_title = "version(s) with dist-tag(s):"
+        versions_with_dist_tags = _vers_tags_table(
             [ver for ver in versions if ver in tag_to_ver.values()],
             tag_to_ver,
             path_info
-        ),
+        )
+    return _VERSIONS_TABLES_HIGHLIGHTING_TAGS_TEMPLATE.format(
+        highlight_title=highlight_title,
+        versions_with_dist_tags=versions_with_dist_tags,
         full_list=_vers_tags_table(
             versions,
             tag_to_ver,
@@ -185,28 +193,20 @@ with requirement(s) "{requirement:s}"</h1>
 def versions_page(
         versions: list[str],
         registry_json: ValidRegistryJson,
-        path_info: PathInfo,
-        is_already_all_dist_tags: bool) -> str:
+        path_info: PathInfo
+        ) -> str:
     """
     List versions.
     Used when a set (may be only 1) of version(s) is found to be valid.
     """
-    if is_already_all_dist_tags:
-        links = _vers_tags_table(
-            versions,
-            registry_json['dist-tags'],
-            path_info
-        )
-    else:
-        links = _versions_tables_highlighting_tags(
-            versions,
-            registry_json['dist-tags'],
-            path_info
-        )
     return _VERSIONS_PAGE_TEMPLATE.format(
         package=path_info.package_name,
         requirement=path_info.version_spec_str,
-        links=links
+        links=_versions_tables_highlighting_tags(
+            versions,
+            registry_json['dist-tags'],
+            path_info
+        )
     )
 
 
