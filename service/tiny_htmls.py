@@ -246,3 +246,36 @@ def all_versions_page(
             path_info
         )
     )
+
+
+_HOME_PAGE_TEMPLATE = '''
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>BYR Archive</title>
+</head>
+<body>
+<h1>BYR Archive</h1>
+This service is similar to jsDelivr. It extracts files from the npm registry website.
+<hr>
+<h2>Usage</h2>
+
+Use package <code>react</code> as example:
+
+<ul>
+    <li><a href="/react@all"><code>/react@all</code></a> - Show all versions.</li>
+    <li><a href="/react@dist-tags"><code>/react@dist-tags</code></a> - Show all distribution tags.</li>
+    <li><a href="/react@>=5.0.0 <18.0.0 || 0.14.3"><code>/react@>=5.0.0 <18.0.0 || 0.14.3</code></a> - Show all versions that satisfy the specified version range.</li>
+    <li><a href="/react@19.2.0"><code>/react@19.2.0</code></a> - Show content of the specified version.</li>
+    <li><a href="/react@next"><code>/react@next</code></a> - Show content corresponding to the specified distribution tag (the tag is "<code>next</code>" here).</li>
+    <li><a href="/react"><code>/react</code></a> - Show content corresponding to the distribution tag "<code>latest</code>".</li>
+</ul>
+
+</body>
+</html>
+'''
+
+
+def home_page() -> str:
+    return _HOME_PAGE_TEMPLATE

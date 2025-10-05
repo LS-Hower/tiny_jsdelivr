@@ -124,6 +124,13 @@ class FeasibleVersionsList(object):
 
 app = Flask(__name__)
 
+
+@app.route('/')
+def home_page() -> Response:
+    return make_response_altered(
+        tiny_htmls.home_page(), 200, CONTENT_TYPE_UTF_8_HTML
+    )
+
 @app.route('/<path:thepath>')
 def delivr(thepath: str) -> Response:
     """
