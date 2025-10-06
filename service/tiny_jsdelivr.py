@@ -1,10 +1,12 @@
 # 2025-09-21  tiny_jsdelivr.py
 
+import heapq
 import json
 import mimetypes
 import os
 import tarfile
 from dataclasses import dataclass
+from functools import cmp_to_key
 from typing import cast
 
 import requests
@@ -52,9 +54,29 @@ def report_cache_folder_size() -> None:
         size_text(folder_size)
     ))
 
-    ls.sort(reverse=True)
+    def compare_size_entry(lhs: tuple[int, str], rhs: tuple[int, str]) -> int:
+        """Compare by size (reversed), then by entry name."""
+        size1, entry1 = lhs
+        size2, entry2 = rhs
+
+        assert entry1 != entry2, f"Unexpected duplicate entry: {entry1}"
+
+        if size1 < size2:
+            return 1
+        elif size1 > size2:
+            return -1
+
+        if entry1 < entry2:
+            return -1
+        elif entry1 > entry2:
+            return 1
+
+        assert False, f"Unexpected duplicate entry: {entry1}"
+
+    to_report = heapq.nsmallest(10, ls, key=cmp_to_key(compare_size_entry))
+
     print('Large cache entries:')
-    for size, entry in ls[:10]:
+    for size, entry in to_report:
         print("- {:>12s}: {:s}".format(size_text(size), entry))
 
 
