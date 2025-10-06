@@ -33,14 +33,14 @@ def report_cache_folder_size() -> None:
     """Show a warning if the cache folder is too large."""
 
     ls = [
-            (
-                get_entry_size(os.path.join(CACHE_FOLDER, entry)),
-                entry + '/' \
-                    if os.path.isdir(os.path.join(CACHE_FOLDER, entry)) \
-                    else entry
-            )
-            for entry in os.listdir(CACHE_FOLDER)
-        ]
+        (
+            get_entry_size(os.path.join(CACHE_FOLDER, entry)),
+            entry + '/' \
+                if os.path.isdir(os.path.join(CACHE_FOLDER, entry)) \
+                else entry
+        )
+        for entry in os.listdir(CACHE_FOLDER)
+    ]
 
     folder_size = sum(size for size, _ in ls)
 
