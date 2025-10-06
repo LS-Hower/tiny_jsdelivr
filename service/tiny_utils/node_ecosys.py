@@ -20,11 +20,6 @@ ValidRegistryJson = TypedDict('ValidRegistryJson', {
 })
 
 
-ErrorRegistryJson = TypedDict('ErrorRegistryJson', {
-    'error': str,
-})
-
-
 def find_entry_file_from_package_json(package_json: dict) -> Optional[str]:
     try:
         res = package_json['jsdelivr']

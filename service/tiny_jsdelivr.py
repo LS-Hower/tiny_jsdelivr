@@ -7,7 +7,6 @@ import os
 import tarfile
 from dataclasses import dataclass
 from functools import cmp_to_key
-from typing import cast
 
 import requests
 from flask import Flask, request, Response
@@ -15,7 +14,7 @@ from flask import Flask, request, Response
 import tiny_htmls
 from tiny_utils.network import PathInfo, RequestNotValidError
 from tiny_utils.network import make_response_altered
-from tiny_utils.node_ecosys import ValidRegistryJson, ErrorRegistryJson
+from tiny_utils.node_ecosys import ValidRegistryJson
 from tiny_utils.node_ecosys import is_valid_version, NodeVersionRange
 from tiny_utils.node_ecosys import find_entry_file_from_package_json
 from tiny_utils.general import get_entry_size, size_text, yellow_text
@@ -240,13 +239,12 @@ def get_registry_json(package_name: str) -> ValidRegistryJson:
 
     # Not cached.
     r = requests.get(registry_json_url)
-    r.raise_for_status()
-    registry_json: ValidRegistryJson | ErrorRegistryJson = r.json()
-
-    if 'error' in registry_json:
+    if r.status_code == 404:
         raise RequestNotValidError(404, f"package {package_name} not found")
+    r.raise_for_status()
+    registry_json: ValidRegistryJson = r.json()
 
-    return cast(ValidRegistryJson, registry_json)
+    return registry_json
 
 
 def download_and_unpack_tarball(
