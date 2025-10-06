@@ -134,7 +134,7 @@ def home_page() -> Response:
 @app.route('/<path:thepath>')
 def delivr(thepath: str) -> Response:
     """
-    Handle jsdelivr request.
+    Handle jsDelivr request.
     Also handle exceptions.
     """
     assert f"/{thepath}" == request.path
@@ -151,7 +151,7 @@ def delivr(thepath: str) -> Response:
 
 def handle_path(abs_path: str) -> Response:
     """
-    Handle jsdelivr request.
+    Handle jsDelivr request.
     """
     if abs_path == '/favicon.ico':
         # The icon. My Chrome browser really wanted this, so I drew it.
