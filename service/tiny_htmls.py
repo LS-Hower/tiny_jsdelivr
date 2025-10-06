@@ -4,7 +4,7 @@ from functools import cmp_to_key
 
 from tiny_utils.network import PathInfo
 from tiny_utils.node_ecosys import ValidRegistryJson, semver_cmp
-from tiny_utils.general import report_counted_things, reverse_cmp
+from tiny_utils.general import report_counted_things
 
 
 _ELEMENT_A_TEMPLATE = '''
@@ -80,7 +80,7 @@ def _vers_tags_table(
     # Deduplicate versions.
     versions = list(set(versions))
     # Sort versions by rules of semantic versioning.
-    versions.sort(key=cmp_to_key(reverse_cmp(semver_cmp)))
+    versions.sort(key=cmp_to_key(semver_cmp), reverse=True)
     # Make a reversed mapping, from version to tags.
     # Note: There might be multiple tags for the same version.
     ver_to_tags = {v: [] for v in tag_to_ver.values()}

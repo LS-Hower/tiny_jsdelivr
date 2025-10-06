@@ -1,7 +1,6 @@
 # 2025-10-01  tiny_utils/general.py
 
 import os
-from collections.abc import Callable
 from pathlib import PurePosixPath
 from typing import Optional
 
@@ -19,12 +18,6 @@ def report_counted_things(
     assert n >= 0
     plural = plural or singular + 's'
     return f"({n} {singular if n <= 1 else plural})"
-
-
-def reverse_cmp[T](cmp: Callable[[T, T], int]) -> Callable[[T, T], int]:
-    def revcmp(x: T, y: T) -> int:
-        return -cmp(y, x)
-    return revcmp
 
 
 class PurePosixPathThatMightBeDir(PurePosixPath):
