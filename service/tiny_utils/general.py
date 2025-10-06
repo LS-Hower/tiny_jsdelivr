@@ -34,10 +34,10 @@ class PurePosixPathThatMightBeDir(PurePosixPath):
     """
     def __init__(self, path: str) -> None:
         super().__init__(path)
-        self._is_dir = path.endswith('/')
+        self.__is_dir = path.endswith('/')
 
     def is_dir(self) -> bool:
-        return self._is_dir
+        return self.__is_dir
 
 
 def get_folder_size(path: str) -> int:
