@@ -55,8 +55,3 @@ def size_text(size: int) -> str:
     if size < 1024 ** 3:
         return "{:.2f} MiB".format(size / 1024 ** 2)
     return "{:.2f} GiB".format(size / 1024 ** 3)
-
-
-def yellow_text(text: str) -> str:
-    """ANSI coloring for yellow text."""
-    return "\033[1;33m{:s}\033[0m".format(text)

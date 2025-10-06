@@ -2,6 +2,7 @@
 
 import heapq
 import json
+import logging
 import mimetypes
 import os
 import tarfile
@@ -17,7 +18,10 @@ from tiny_utils.network import make_response_altered
 from tiny_utils.node_ecosys import ValidRegistryJson
 from tiny_utils.node_ecosys import is_valid_version, NodeVersionRange
 from tiny_utils.node_ecosys import find_entry_file_from_package_json
-from tiny_utils.general import get_entry_size, size_text, yellow_text
+from tiny_utils.general import get_entry_size, size_text
+
+
+app = Flask(__name__)
 
 
 NPM_REGISTRY_URL_BEGIN = os.getenv(
@@ -30,7 +34,7 @@ CACHE_FOLDER = 'tiny_jsdelivr_cache'
 CACHE_FOLDER_SIZE_THRESHOLD = (2 ** 20) * 1  # 1 MB
 
 
-def report_cache_folder_size() -> None:
+def report_cache_folder_size(logger: logging.Logger) -> None:
     """Show a warning if the cache folder is too large."""
 
     ls = [
@@ -47,11 +51,6 @@ def report_cache_folder_size() -> None:
 
     if folder_size < CACHE_FOLDER_SIZE_THRESHOLD:
         return
-
-    print("{:s}: Cache folder size is too large: {:s}.".format(
-        yellow_text('WARNING'),
-        size_text(folder_size)
-    ))
 
     def compare_size_entry(lhs: tuple[int, str], rhs: tuple[int, str]) -> int:
         """Compare by size (reversed), then by entry name."""
@@ -74,9 +73,18 @@ def report_cache_folder_size() -> None:
 
     to_report = heapq.nsmallest(10, ls, key=cmp_to_key(compare_size_entry))
 
-    print('Large cache entries:')
-    for size, entry in to_report:
-        print("- {:>12s}: {:s}".format(size_text(size), entry))
+    msg = "Cache folder size is too large: {:s}.\n".format(
+        size_text(folder_size)
+    )
+
+    msg += 'Large cache entries:\n'
+
+    msg += '\n'.join(
+        "- {:>12s}: {:s}".format(size_text(size), entry)
+        for size, entry in to_report
+    )
+
+    return logger.warning(msg)
 
 
 @dataclass
@@ -143,7 +151,6 @@ class FeasibleVersionsList(object):
         return FeasibleVersionsList([], False)
 
 
-app = Flask(__name__)
 
 
 @app.route('/')
@@ -277,7 +284,7 @@ def download_and_unpack_tarball(
         tar.close()
 
     if flag_new_dir_or_file_cached:
-        report_cache_folder_size()
+        report_cache_folder_size(app.logger)
 
 
 def give_file_or_dir(path_info: PathInfo, local_name: str) -> Response:
@@ -386,8 +393,10 @@ def give_file(path_info: PathInfo, local_name: str) -> Response:
 
 
 def main() -> None:
-    report_cache_folder_size()
-    app.run(host='0.0.0.0', port=2357, debug=True)
+    report_cache_folder_size(app.logger)
+    # `use_reloader` set to `False`
+    # in order to avoid the previous line being executed twice.
+    app.run(host='0.0.0.0', port=2357, debug=True, use_reloader=False)
 
 
 if __name__ == '__main__':
